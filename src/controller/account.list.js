@@ -21,7 +21,10 @@ async function accountList(data, db) {
         users.id AS user_id,
         users.username AS user_username
       `)
-    );
+    )
+    .whereRaw(`
+      accounts.disable = false
+    `);
 
   if (mode != "admin") {
     wheres.push({ user_id: { "$eq": user_id } });
