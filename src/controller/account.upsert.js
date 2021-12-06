@@ -14,7 +14,7 @@ async function accountUpsert(data, db) {
     const modelWeb = new ModelWeb(db, trx);
     const modelAccount = new ModelAccount(db, trx);
   
-    await modelAccount.query().delete().where({ user_id }).whereNotIn("id", accounts.reduce((list, account) => { 
+    await modelAccount.query().update({ disable: true }).where({ user_id }).whereNotIn("id", accounts.reduce((list, account) => { 
       if (account.id) {
         list.push(account.id);
       }
@@ -47,6 +47,7 @@ async function accountUpsert(data, db) {
       result.push(...list);
     }
 
+    let listInsertButDisable = [];
     if (listInsert.length) {
       const list = await modelAccount.query().insert(
         listInsert.map((account) => {
@@ -59,11 +60,12 @@ async function accountUpsert(data, db) {
           }
         })
       ).onConflict(["user_id", "web_id", "username"]).ignore().returning(["*"]);
-      result.push(...list);
+      listInsertButDisable = list.filter((item) => item.disbale);
+      result.push(...list.filter((item) => !item.disbale));
     }
 
 
-    return { status: 200, data: { accounts: result } }
+    return { status: 200, data: { accounts: result, listInsertButDisable } }
   })
 }
 

@@ -9,28 +9,30 @@ async function accountList(data, db) {
   }
 
   const modelAccount = new ModelAccount(db);
-  const query = modelAccount.query()
-    .join("users", "users.id", "accounts.user_id")
-    .join("webs", "webs.id", "accounts.web_id").select(
-      modelAccount.DB.raw(`
-        COUNT(*) OVER(),
-        accounts.*,
-        webs.web_url,
-        webs.web_key,
-        webs.web_name,
-        users.id AS user_id,
-        users.username AS user_username
-      `)
-    )
-    .whereRaw(`
-      accounts.disable = false
-    `);
+  const accounts = await modelAccount.list(mode, user_id, wheres, pageIndex, pageSize, order);
+  // const query = modelAccount.query()
+  //   .join("users", "users.id", "accounts.user_id")
+  //   .join("webs", "webs.id", "accounts.web_id").select(
+  //     modelAccount.DB.raw(`
+  //       COUNT(*) OVER(),
+  //       accounts.*,
+  //       webs.web_url,
+  //       webs.web_key,
+  //       webs.web_name,
+  //       users.id AS user_id,
+  //       users.username AS user_username
+  //     `)
+  //   )
 
-  if (mode != "admin") {
-    wheres.push({ user_id: { "$eq": user_id } });
-  }
+  // if (mode != "admin") {
+  //   wheres.push({ user_id: { "$eq": user_id } });
 
-  const accounts = await modelAccount.queryByCondition(query, wheres, pageIndex, pageSize, order);
+  //   query .whereRaw(`
+  //     accounts.disable = false
+  //   `);
+  // }
+
+  // const accounts = await modelAccount.queryByCondition(query, wheres, pageIndex, pageSize, order);
   const total = accounts[0] ? +accounts[0].count : 0;
   return { status: 200, data: { accounts, total } }
 }
