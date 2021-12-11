@@ -4,7 +4,7 @@ async function accountCreate(data, db) {
   const { username, password, web_id } = data.params;
   const { id: user_id } = data.meta.user;
   if (!username || !password) {
-    return { status: 400, message: "SystemError: Missing params" }
+    return { status: 400, message: "Missing params" }
   }
 
   const modelAccount = new ModelAccount(db);

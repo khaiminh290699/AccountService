@@ -3,7 +3,7 @@ const { ModelAccount } = require("../db");
 async function accountUpdate(data, db) {
   const { id, username, password } = data.params;
   if (!id || !username || !password) {
-    return { status: 400, message: "SystemError: Missing params" }
+    return { status: 400, message: "Missing params" }
   }
 
   const modelAccount = new ModelAccount(db);

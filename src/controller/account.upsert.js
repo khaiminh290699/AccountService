@@ -4,7 +4,7 @@ async function accountUpsert(data, db) {
   const { accounts } = data.params;
   const { id: user_id } = data.meta.user;
   if (!accounts) {
-    return { status: 400, message: "SystemError: Missing params" }
+    return { status: 400, message: "Missing params" }
   }
 
   const model = new Model(db);
